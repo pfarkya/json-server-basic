@@ -84,8 +84,8 @@ var _start = 0,
             url: "http://localhost:8080/addresses?_start=" + _start + "&_limit=" + _limit,
             dataType: "json",
             method: "GET",
-            error: function(err) {
-                alert("error" + err.message);
+            error: function(e) {
+                alert("error" + e);
             },
             success: function(data) {
                 var keys, keylen;
@@ -189,10 +189,9 @@ var _start = 0,
                 updateRow.append('<td><button class="btn btn-primary update">Update</button></td>')
                     .append('<td><button class="btn btn-danger delete">delete</button></td>');
                 $('#modal-' + id).modal('hide');
-                alert("successfully updated");
             },
-            error: function(err) {
-                alert("error" + err.message);
+            error: function(e) {
+                alert("error" + e);
             }
         });
     });
@@ -222,7 +221,6 @@ var _start = 0,
 
                 $('#modal-add').modal('hide');
                 _count++;
-                alert('successfully added the record');
                 $('#count').html(_count);
             },
             error: function(e) {
