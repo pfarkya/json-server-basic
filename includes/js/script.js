@@ -1,5 +1,6 @@
 "use strict";
-
+var _start = 0,
+    _limit = 500;
 (function() {
     // to get the keys
     function getKeys(keys) {
@@ -51,7 +52,7 @@
                 form.append('<div class="form-group">\
 						    	<label for="' + key + '" class="col-lg-2 control-label">' + key + '</label>\
 						    	<div class="col-lg-10">\
-						    		<input class="form-control" id="' + key + '" value="' + values[i]["innerText"] + ' ">\
+						    		<input class="form-control" id="' + key + '" placeholder="' + values[i]["innerText"] + ' ">\
 						    	</div>\
 						  	</div>');
             else if (values[i]["innerText"] != 'id') form.append('<div class="form-group">\
@@ -66,7 +67,10 @@
 
     //loading whole data at starting
     $('document').ready(function() {
-        var response = $.ajax({ url: "http://localhost:8080/addresses", dataType: "json" });
+        var response = $.ajax({
+            url: "http://localhost:8080/addresses?_start=" + _start + "&_limit=" + _limit,
+            dataType: "json"
+        });
         response.done(function(data) {
             var keys, keylen;
             var table = $('#table');
@@ -81,18 +85,21 @@
                 var tbody = table.append('<tbody></tbody>');
                 data.forEach(function(d) {
                     tbody.append('<tr id="' + d["id"] + '"></tr>');
-                    var appender = $('tbody>tr:nth-last-child(1)')
-                    console.log("hello");
+                    var appender = $('tbody>tr:nth-last-child(1)');
                     for (var i = 0; i < keylen; i++) {
                         appender.append('<td>' + d[keys[i]] + '</td>');
                     }
                     appender.append('<td><button class="btn btn-primary update">Update</button></td>');
                     appender.append('<td><button class="btn btn-danger delete">delete</button></td>');
                 });
-                if ($('.add').length == 0) $('.container>.row>h2').after('\
+                if ($('#addmore').length == 0) $('.container>.row>h2').after('\
                 	<button class="btn btn-success pull-right"\
                   style="margin-top:20px;margin-bottom=10px;" id="addmore"\
              >Add More</button>');
+                if ($('#loadMore').length == 0) $('.container').append('<button class="btn btn-success"\
+                  style="margin-top:20px;margin-bottom=10px;" id="loadMore"\
+             >Load More</button>')
+                _start = data[data.length - 1]["id"];
             }
         });
     });
@@ -142,7 +149,7 @@
         var updateRecordData = {};
         Keys.forEach(function(key) {
             if (key == 'id') id = $('#' + key).val();
-            else updateRecordData[key] = $('#' + key).val();
+            else if ($('#' + key).val()) updateRecordData[key] = $('#' + key).val();
         });
         $.ajax({
             url: "http://localhost:8080/addresses/" + id,
@@ -188,4 +195,61 @@
             }
         });
     });
+    //loading more data in the page
+    $('.container').delegate('#loadMore', 'click', function() {
+        $.ajax({
+            url: "http://localhost:8080/addresses?_start=" + _start + "&_limit=" + _limit,
+            dataType: "json",
+            success: function(data) {
+                var keys = [];
+                $('thead>tr>th').each(function(index) {
+                    keys.push($(this).text());
+                });
+                if (data[0]) {
+                    var tbody = $('tbody');
+                    data.forEach(function(d) {
+                        tbody.append('<tr id="' + d["id"] + '"></tr>');
+                        var appender = $('tbody>tr:nth-last-child(1)');
+                        keys.forEach(function(key) {
+                            appender.append('<td>' + d[key] + '</td>');
+                        });
+                        appender.append('<td><button class="btn btn-primary update">Update</button></td>');
+                        appender.append('<td><button class="btn btn-danger delete">delete</button></td>');
+                    });
+                }
+                _start = data[data.length - 1]["id"];
+            }
+        });
+    });
 })();
+
+/*
+
+$(window).on("scroll touchmove", function() {
+            if ($(document).scrollTop() > ($(document).height()) * (3 / 4)) {
+                $.ajax({
+                        url: "http://localhost:8080/addresses?_start=" + _start + "&_limit=" + _limit,
+                        dataType: "json",
+                        success: function(data) {
+                            var keys = [];
+                            $('thead>tr>th').each(function(index) {
+                                keys.push($(this).text());
+                            });
+                            if (data[0]) {
+                                var tbody = $('tbody');
+                                data.forEach(function(d) {
+                                    tbody.append('<tr id="' + d["id"] + '"></tr>');
+                                    var appender = $('tbody>tr:nth-last-child(1)');
+                                    keys.forEach(function(key) {
+                                        appender.append('<td>' + d[key] + '</td>');
+                                    });
+                                    appender.append('<td><button class="btn btn-primary update">Update</button></td>');
+                                    appender.append('<td><button class="btn btn-danger delete">delete</button></td>');
+                                });
+                            }
+                            _start = data[data.length - 1]["id"];
+                        });
+                    //console.log("done");
+                }
+            });
+*/
