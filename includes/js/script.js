@@ -65,7 +65,7 @@ var _start = 0,
                 form.append('<div class="form-group">\
 						    	<label for="' + key + '" class="col-lg-2 control-label">' + key + '</label>\
 						    	<div class="col-lg-10">\
-						    		<input class="form-control" id="' + key + '" placeholder="' + values[i]["innerText"] + ' ">\
+						    		<input class="form-control" id="' + key + '" value="' + values[i]["innerText"] + ' ">\
 						    	</div>\
 						  	</div>');
             /*            else if (values[i]["innerText"] != 'id') form.append('<div class="form-group">\
