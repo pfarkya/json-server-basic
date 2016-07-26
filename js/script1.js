@@ -128,7 +128,7 @@ var _start = 0,
         //update or append row
     var appendRow = function(appender, data) {
         _keys.forEach(function(key) {
-            appender.append('<td data-title="' + key + '">' + data[key] + '</td>');
+            appender.append('<td data-title="' + key.toUpperCase() + '">' + data[key] + '</td>');
         });
         appender.append('<td data-title="Action"><button class="btn btn-primary update">Update</button><button class="btn btn-danger delete">delete</button></td>');
     }
