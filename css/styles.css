@@ -44,7 +44,7 @@ footer .unstyled li {
     tr {
         border: 1px solid #ccc;
     }
-    td {
+    #table>tbody>tr>td {
         /* Behave  like a "row" */
         border: none;
         border-bottom: 1px solid #eee;
@@ -52,14 +52,6 @@ footer .unstyled li {
         padding-left: 50%;
         white-space: normal;
         text-align: left;
-    }
-    .table>tbody>tr>td,
-    .table>tbody>tr>th,
-    .table>tfoot>tr>td,
-    .table>tfoot>tr>th,
-    .table>thead>tr>td,
-    .table>thead>tr>th {
-        padding-left: 50%;
     }
     td:before {
         /* Now like a table header */

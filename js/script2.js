@@ -50,12 +50,12 @@ var _start = 0,
                         <button class="close" data-dismiss="modal">&times;</button>\
                         <h4 class="modal-title">' + title + '</h4>\
                     </div><!-- end modal-header -->\
-                    <form class="form-horizontal" id="' + button + '">\
+                    <form class="form-horizontal">\
                         <div class="modal-body">\
                     </div><!-- end modal-body -->\
                     <div class="modal-footer">\
                         <button class="btn btn-danger" data-dismiss="modal" type="button">Cancel</button>\
-                        <button class="btn btn-primary" type="submit" id="UU">' + button + '</button>\
+                        <button class="btn btn-primary" type="submit" id="' + button + '">' + button + '</button>\
                     </div><!-- end modal-footer -->\
                     </form>\
                 </div><!-- end modal-content -->\
@@ -139,7 +139,7 @@ var _start = 0,
     });
 
     //open update data modal
-    $('#table').delegate('.update', 'click', function() {
+    $('.update').delegate('click', function() {
         var id = $(this).parent().parent().attr('id');
         var detail = $('#' + id),
             modalId = "modal-" + id;
@@ -151,7 +151,7 @@ var _start = 0,
         $('#modal-' + id).modal('show');
     });
     //deleting data in database
-    $('#table').delegate('.delete', 'click', function() {
+    $('.delete').delegate('click', function() {
         var $this = $(this);
         var row = $this.parent().parent()
         var id = row.attr('id');
@@ -171,71 +171,69 @@ var _start = 0,
         });
     });
     //open Add Modal
-    $('body').delegate('#addmore', 'click', function(evt) {
+    $('#addmore').delegate('click', function(evt) {
         evt.preventDefault();
         $("div[id^='modal-']").remove();
         var modalId = 'modal-add';
         createUpdateModal(_keys, "add", modalId);
         $('#' + modalId).modal('show');
     });
-
+    /*    $('body').delegate('#Save', 'click', function(evt) {
+            $(this).submit();
+        });
+    */
     //update the data into data base
-    $('body').delegate('#Save', 'submit', function(evt) {
-        evt.preventDefault();
-        if (true) {
-            var id;
-            var updateRecordData = {};
-            _keys.forEach(function(key) {
-                if (key == 'id') id = $('#' + key).val();
-                else if ($('#' + key).val()) updateRecordData[key] = $('#' + key).val();
-            });
-            console.log(JSON.stringify(updateRecordData));
-            //modifying data in server
-            $.ajax({
-                url: "http://localhost:8080/addresses/" + id,
-                method: "PATCH",
-                "Content-Type": "application/json",
-                data: updateRecordData,
-                success: function(result) {
-                    var updateRow = $('#' + id);
-                    updateRow.empty();
-                    appendRow(updateRow, result);
-                    $('#modal-' + id).modal('hide');
-                    alert("successfully updated");
-                },
-                error: function(err) {
-                    alert("error" + err.message);
-                }
-            });
-        }
+    $('#Save').delegate('submit', function(evt) {
+        var id;
+        var updateRecordData = {};
+        _keys.forEach(function(key) {
+            if (key == 'id') id = $('#' + key).val();
+            else if ($('#' + key).val()) updateRecordData[key] = $('#' + key).val();
+        });
+        console.log(JSON.stringify(updateRecordData));
+        //modifying data in server
+        $.ajax({
+            url: "http://localhost:8080/addresses/" + id,
+            method: "PATCH",
+            "Content-Type": "application/json",
+            data: updateRecordData,
+            success: function(result) {
+                var updateRow = $('#' + id);
+                updateRow.empty();
+                appendRow(updateRow, result);
+                $('#modal-' + id).modal('hide');
+                alert("successfully updated");
+            },
+            error: function(err) {
+                alert("error" + err.message);
+            }
+        });
     });
     //add event listener for adding data into data base
-    $('body').delegate('#Add', 'submit', function(evt) {
+    $('#Add').delegate('submit', function(evt) {
         evt.preventDefault();
-        if (true) {
-            var id;
-            var updateRecordData = {};
-            _keys.forEach(function(key) {
-                if (key != 'id') updateRecordData[key] = $('#' + key).val();
-            });
-            $.ajax({
-                url: "http://localhost:8080/addresses/",
-                method: "POST",
-                "Content-Type": "application/json",
-                data: updateRecordData,
-                success: function(result) {
-                    alert('successfully added the record');
-                    $('#modal-add').modal('hide');
-                    _count++;
-                    $('#count').html(_count);
-                },
-                error: function(e) {
-                    alert("error" + e);
-                }
-            });
-        }
+        var id;
+        var updateRecordData = {};
+        _keys.forEach(function(key) {
+            if (key != 'id') updateRecordData[key] = $('#' + key).val();
+        });
+        $.ajax({
+            url: "http://localhost:8080/addresses/",
+            method: "POST",
+            "Content-Type": "application/json",
+            data: updateRecordData,
+            success: function(result) {
+                alert('successfully added the record');
+                $('#modal-add').modal('hide');
+                _count++;
+                $('#count').html(_count);
+            },
+            error: function(e) {
+                alert("error" + e);
+            }
+        });
     });
-    $('body').delegate('#search', 'click', function(evt) {
+    $('#search').delegate('click', function(evt) {
         evt.preventDefault();
         var sortby = $('#searchInput .sortby option:selected').val(),
             search = $('#searchInput input').val(),
@@ -267,7 +265,7 @@ var _start = 0,
             }
         });
     });
-    $('body').delegate('#showDB', 'click', function(evt) {
+    $('#showDB').delegate('click', function(evt) {
         evt.preventDefault();
         var sortby = $('#inputShowDB .sortby option:selected').val(),
             order = $('#inputShowDB .order option:selected').val(),
@@ -299,7 +297,7 @@ var _start = 0,
         });
     });
     //pagination
-    $('body').delegate('.loadMore', 'click', function(evt) {
+    $('.loadMore').delegate('click', function(evt) {
         evt.preventDefault();
         var $this = $(this),
             parent = $this.parent(),
