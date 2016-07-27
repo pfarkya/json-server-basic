@@ -178,7 +178,6 @@ var _start = 0,
         createUpdateModal(_keys, "add", modalId);
         $('#' + modalId).modal('show');
     });
-
     //update the data into data base
     $('body').delegate('#Save', 'submit', function(evt) {
         evt.preventDefault();
@@ -259,6 +258,10 @@ var _start = 0,
                         var appender = $('tbody>tr:nth-last-child(1)');
                         appendRow(appender, d);
                     });
+                    updateCount();
+                } else {
+                    alert("No Record Found");
+                    $('tbody').empty();
                     updateCount();
                 }
             },
