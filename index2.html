@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Addresses</title>
+    <!-- Mobile viewport optimized -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Bootstrap CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="includes/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+    <!-- Include Modernizr in the head, before any other Javascript -->
+    <!-- <script src="includes/js/modernizr-2.6.2.min.js"></script> -->
+</head>
+
+<body ng-app="myApp" ng-controller="myController" ng-init="getData();">
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <div class="navbar-header">
+                <button class="navbar-toggle collapsed" data-target="#navbarcollapsing" data-toggle="collapse" aria-expanded="false" aria-control="navbar" type="button">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <h2 class="pull-left">Address Book <small id="count"></small></h2>
+            </div>
+            <p ng-bind='message'></p>
+            <!-- navbar header-->
+            <div id="navbarcollapsing" class="collapse navbar-collapse">
+                <form class="navbar-form navbar-left" id="searchInput">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group input-group-sm">
+                            <select class="form-control sortby" ng-model="sortby" >
+                                <option value="">Sort by</option>
+                                <option ng-repeat="key in keys" value="{{key}}">{{key.toUpperCase()}}</option>
+                            </select>
+                        </span>
+                        <span class="input-group input-group-sm">
+                            <select class="form-control searchby" ng-model="searchby">
+                                <option value="">Search By</option>
+                                <option ng-repeat="key in keys" value="{{key}}_like">{{key.toUpperCase()}}</option>
+                            </select>
+                        </span>
+                        <span class="input-group input-group-sm">
+                            <select class="form-control order" ng-model="order">
+                                <option value="">Order</option>
+                                <option value="ASC">Ascending</option>
+                                <option value="DESC">Descending</option>
+                            </select>
+                        </span>
+                        <input type="text" class="form-control" style="width: 200px;" placeholder="Search for..." ng-model="search">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button" id="search" ng-click="go()">Go!</button>
+                        </span>
+                    </div>
+                    <!-- /input-group -->
+                </form>
+                <!-- end navbar-form -->
+                <button class="btn btn-success pull-right" data-toggle="modal" data-target="#modalAdd" style="margin-top:20px;margin-bottom=10px;" id="addmore">Add More</button>
+            </div>
+            <!-- Collapse navbar-->
+        </div>
+        <!-- container of navbar-->
+    </div>
+    <!-- navbar end-->
+    <!-- container of bootstrap -->
+    <div class="container" id="main">
+        <!-- heading for the table -->
+        <div class="responsive-table">
+            <table class="table table-hover table-inverse" id="table">
+                <thead>
+                    <tr>
+                        <th ng-repeat="key in keys">{{key.toUpperCase()}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="address in addresses">
+                        <td ng-repeat="(key, value) in address" data-title="{{key}}"> {{ value }} </td>
+                        <td data-title="ACTION">
+                            <button class="btn btn-primary update" data-toggle="modal" data-target="#modalUpdate" ng-click="updateModal(address)">Update</button>
+                            <button class="btn btn-danger delete" ng-click="delete(address.id,$index)">delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- end of table-->
+        </div>
+        <!-- end of responsive table-->
+    </div>
+    <!-- end of container-->
+    <div class="modal fade" tabindex="-1" id="modalAdd">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">ADD</h4>
+                </div>
+                <!-- end modal-header -->
+                <form class="form-horizontal" ng-submit="add()">
+                    <div class="modal-body">
+                        <div class="form-group" ng-repeat="key in keys| filter:'!id'">
+                            <label class="col-lg-2 control-label" for="{{key}}">{{key.toUpperCase()}}</label>
+                            <div class="col-lg-10">
+                                <input class="form-control" id="{{key}}" ng-model="dataAddM[key]" placeholder="{{key.toUpperCase()}}" type="{{key}}">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end modal-body -->
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" id="Add">Add</button>
+                        <button class="btn btn-alert" data-dismiss="modal" type="button">Cancel</button>
+                    </div>
+                    <!-- end modal-footer -->
+                </form>
+            </div>
+            <!-- end modal-content -->
+        </div>
+        <!-- end modal-dialog -->
+    </div>
+    <div class="modal fade" tabindex="-1" id="modalUpdate">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update</h4>
+                </div>
+                <!-- end modal-header -->
+                <form class="form-horizontal" ng-submit="update()">
+                    <div class="modal-body">
+                        <div class="form-group" ng-repeat="key in keys| filter:'!id'">
+                            <label class="col-lg-2 control-label" for="{{key}}">{{key.toUpperCase()}}</label>
+                            <div class="col-lg-10">
+                                <input class="form-control" id="{{key}}" ng-model="dataUpdate[key]" type="{{key}}">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end modal-body -->
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" type="submit" id="Add">Save</button>
+                        <button class="btn btn-alert" data-dismiss="modal" type="button">Cancel</button>
+                    </div>
+                    <!-- end modal-footer -->
+                </form>
+            </div>
+            <!-- end modal-content -->
+        </div>
+        <!-- end modal-dialog -->
+    </div>
+    <div class="container">
+        <nav aria-label="...">
+            <ul class="pager">
+                <li class="previous"><a class="loadMore" ng-click="previousPage()"><span aria-hidden="true">&larr;</span> Older</a></li>
+                <li class="next"><a class="loadMore" ng-click="nextPage()">Newer <span aria-hidden="true">&rarr;</span></a></li>
+            </ul>
+        </nav>
+    </div>
+    <!--end of footer-->
+    <!-- First try for the online version of jQuery-->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script> -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+    <!-- If no online access, fallback to our hardcoded version of jQuery -->
+    <script>
+    window.jQuery || document.write('<script src="includes/js/jquery-1.11.3.min.js"><\/script>')
+    </script>
+    <!-- Bootstrap JS -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <!--Angular JS-->
+    <script src="includes/js/angular_1.5.8.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/script3.js"></script>
+</body>
+
+</html>
